@@ -539,7 +539,7 @@ SCSS
 DEPRECATION WARNING on line 2 of test_long_extendee_inline.scss:
 Extending a compound selector, .foo.bar, is deprecated and will not be supported in a future release.
 Consider "@extend .foo, .bar" instead.
-See https://github.com/sass/sass/issues/1599 for details.
+See http://bit.ly/ExtendCompound for details.
 WARNING
   end
 
