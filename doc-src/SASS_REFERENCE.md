@@ -1409,9 +1409,10 @@ to use `.error` with `.seriousError`.
 This is a maintenance burden, leads to tricky bugs,
 and can bring non-semantic style concerns into the markup.
 
-The `@extend` directive avoids these problems
-by telling Sass that one selector should inherit the styles of another selector.
-For example:
+The `@extend` directive avoids these problems by telling Sass that one selector
+should inherit the styles of another selector—in other words, that all elements
+that match one selector should be styled as though they also match the other
+selector. For example:
 
     .error {
       border: 1px #f00;
@@ -1433,10 +1434,10 @@ is compiled to:
       border-width: 3px;
     }
 
-This means that all styles defined for `.error`
-are also applied to `.seriousError`,
-in addition to the styles specific to `.seriousError`.
-In effect, every element with class `.seriousError` also has class `.error`.
+This means that all styles defined for `.error` are also applied to
+`.seriousError`, in addition to the styles specific to `.seriousError`. Think of
+it as a shorthand that lets you write `class="seriousError"` instead of
+`class="error seriousError"`.
 
 Other rules that use `.error` will work for `.seriousError` as well.
 For example, if we have special styles for errors caused by hackers:
@@ -1749,12 +1750,13 @@ But this is an error:
 Someday we hope to have `@extend` supported natively in the browser, which will
 allow it to be used within `@media` and other directives.
 
-#### Extending Complex Selectors
+#### Extending Compound Selectors
 
-Older versions of Sass allowed complex selectors, such as `.special.cool` or
+Older versions of Sass allowed compound selectors, such as `.special.cool` or
 `a:hover`, to be extended. Only style rules containing *all* simple selectors
-would be extended. However, this violated the rule that the extended element
-should be styled as though it matched the extended selector. For example,
+would be extended. However, this violated the rule that the elements matching
+the style rule should be styled as though it matched the extended selector. For
+example,
 
     .neat {
       @extend .special;
@@ -1768,10 +1770,12 @@ means that all elements with `class="neat"` should be styled as though they had
     }
 
 *should mean* that all elements with `class="neat"` should be styled as though
-they had `class="neat special cool"`. But that's not how it actually worked. The
-old behavior was inconsistent, violated guarantees that CSS usually provides,
-and was expensive to implement besides, so was deprecated and is no longer
-supported in the most recent Sass releases.
+they had `class="neat special cool"`. But that's not how it actually worked.
+They were instead styled in a way that was impossible to achieve with pure HTML,
+which was inconsistent, violated guarantees that CSS usually provides, and was
+very expensive to implement leading to slow compile times for stylesheets with
+many `@extend`s. So the old behavior was deprecated and is no longer supported
+in the most recent Sass releases.
 
 Most old stylesheets that extend complex selectors can be updated to extend both
 simple selectors individually, as in:
@@ -1789,7 +1793,7 @@ refer to both selectors at once:
     }
 
     .neat {
-*     @extend %special-cool;
+      @extend %special-cool;
     }
 
 ### `@at-root`
