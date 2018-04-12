@@ -932,11 +932,9 @@ The different meanings of `-` take precedence in the following order:
 
 #### Color Operations
 
-All arithmetic operations are supported for color values,
-where they work piecewise.
-This means that the operation is performed
-on the red, green, and blue components in turn.
-For example:
+Older versions of Sass supported arithmetic operations for color values, where
+they worked separately for each color channel. This means that the operation is
+performed on the red, green, and blue channels in turn. For example:
 
     p {
       color: #010203 + #040506;
@@ -948,74 +946,10 @@ and is compiled to:
     p {
       color: #050709; }
 
-Often it's more useful to use {Sass::Script::Functions color functions}
-than to try to use color arithmetic to achieve the same effect.
-
-Arithmetic operations also work between numbers and colors,
-also piecewise.
-For example:
-
-    p {
-      color: #010203 * 2;
-    }
-
-computes `01 * 2 = 02`, `02 * 2 = 04`, and `03 * 2 = 06`,
-and is compiled to:
-
-    p {
-      color: #020406; }
-
-Note that colors with an alpha channel
-(those created with the {Sass::Script::Functions#rgba rgba}
-or {Sass::Script::Functions#hsla hsla} functions)
-must have the same alpha value in order for color arithmetic
-to be done with them.
-The arithmetic doesn't affect the alpha value.
-For example:
-
-    p {
-      color: rgba(255, 0, 0, 0.75) + rgba(0, 255, 0, 0.75);
-    }
-
-is compiled to:
-
-    p {
-      color: rgba(255, 255, 0, 0.75); }
-
-The alpha channel of a color can be adjusted using the
-{Sass::Script::Functions#opacify opacify} and
-{Sass::Script::Functions#transparentize transparentize} functions.
-For example:
-
-    $translucent-red: rgba(255, 0, 0, 0.5);
-    p {
-      color: opacify($translucent-red, 0.3);
-      background-color: transparentize($translucent-red, 0.25);
-    }
-
-is compiled to:
-
-    p {
-      color: rgba(255, 0, 0, 0.8);
-      background-color: rgba(255, 0, 0, 0.25); }
-
-IE filters require all colors include the alpha layer, and be in
-the strict format of #AABBCCDD. You can more easily convert the
-color using the {Sass::Script::Functions#ie_hex_str ie_hex_str}
-function.
-For example:
-
-    $translucent-red: rgba(255, 0, 0, 0.5);
-    $green: #00ff00;
-    div {
-      filter: progid:DXImageTransform.Microsoft.gradient(enabled='false', startColorstr='#{ie-hex-str($green)}', endColorstr='#{ie-hex-str($translucent-red)}');
-    }
-
-is compiled to:
-
-    div {
-      filter: progid:DXImageTransform.Microsoft.gradient(enabled='false', startColorstr=#FF00FF00, endColorstr=#80FF0000);
-    }
+However, these operations rarely corresponded with any human understandings of
+how colors in practice. They were deprecated and are no longer supported in
+recent versions of Sass. Stylesheets should use
+{Sass::Script::Functions color functions} instead to manipulate colors.
 
 #### String Operations
 
@@ -1549,50 +1483,6 @@ to avoid unnecessary duplication,
 so something like `.seriousError.seriousError` gets translated to `.seriousError`.
 In addition, it won't produce selectors that can't match anything, like `#main#footer`.
 
-#### Extending Complex Selectors
-
-Class selectors aren't the only things that can be extended.
-It's possible to extend any selector involving only a single element,
-such as `.special.cool`, `a:hover`, or `a.user[href^="http://"]`.
-For example:
-
-    .hoverlink {
-      @extend a:hover;
-    }
-
-Just like with classes, this means that all styles defined for `a:hover`
-are also applied to `.hoverlink`.
-For example:
-
-    .hoverlink {
-      @extend a:hover;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-
-is compiled to:
-
-    a:hover, .hoverlink {
-      text-decoration: underline; }
-
-Just like with `.error.intrusion` above,
-any rule that uses `a:hover` will also work for `.hoverlink`,
-even if they have other selectors as well.
-For example:
-
-    .hoverlink {
-      @extend a:hover;
-    }
-    .comment a.user:hover {
-      font-weight: bold;
-    }
-
-is compiled to:
-
-    .comment a.user:hover, .comment .user.hoverlink {
-      font-weight: bold; }
-
 #### Multiple Extends
 
 A single selector can extend more than one selector.
@@ -1858,6 +1748,49 @@ But this is an error:
 
 Someday we hope to have `@extend` supported natively in the browser, which will
 allow it to be used within `@media` and other directives.
+
+#### Extending Complex Selectors
+
+Older versions of Sass allowed complex selectors, such as `.special.cool` or
+`a:hover`, to be extended. Only style rules containing *all* simple selectors
+would be extended. However, this violated the rule that the extended element
+should be styled as though it matched the extended selector. For example,
+
+    .neat {
+      @extend .special;
+    }
+
+means that all elements with `class="neat"` should be styled as though they had
+`class="neat special"`, so
+
+    .neat {
+      @extend .special.cool;
+    }
+
+*should mean* that all elements with `class="neat"` should be styled as though
+they had `class="neat special cool"`. But that's not how it actually worked. The
+old behavior was inconsistent, violated guarantees that CSS usually provides,
+and was expensive to implement besides, so was deprecated and is no longer
+supported in the most recent Sass releases.
+
+Most old stylesheets that extend complex selectors can be updated to extend both
+simple selectors individually, as in:
+
+    .neat {
+      @extend .special, .cool;
+    }
+
+This doesn't do *exactly* the same thing, but it usually works. If that's not
+sufficient, you can use a [placeholder selector](#placeholder_selectors_foo) to
+refer to both selectors at once:
+
+    .special.cool {
+      @extend %special-cool;
+    }
+
+    .neat {
+*     @extend %special-cool;
+    }
 
 ### `@at-root`
 
