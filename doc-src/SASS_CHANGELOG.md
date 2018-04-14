@@ -3,6 +3,10 @@
 * Table of contents
 {:toc}
 
+## 3.5.7
+
+* Add a post-install message indicating that Ruby Sass is deprecated.
+
 ## 3.5.6 (22 March 2018)
 
 * Allow `!` in custom property values.
