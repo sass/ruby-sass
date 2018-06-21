@@ -1,15 +1,16 @@
 sudo: false
 language: ruby
 cache: bundler
+
 install:
   # If we're running for a pull request, check out the revision of sass-spec
   # referenced by that pull request.
   - |
     if [ ! -z "$TRAVIS_PULL_REQUEST" -a "$TRAVIS_PULL_REQUEST" != false ]; then
+      ref=$(extra/sass-spec-ref.sh)
       mkdir sass-spec
       git -C sass-spec init
-      git -C sass-spec pull --depth=1 git://github.com/sass/sass-spec \
-        $(extra/sass-spec-ref.sh)
+      git -C sass-spec pull --depth=1 git://github.com/sass/sass-spec "$ref"
       bundle config local.sass-spec "$(pwd)/sass-spec"
     fi
 
