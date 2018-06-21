@@ -18,7 +18,7 @@ fi
 
 >&2 echo "Fetching pull request $TRAVIS_PULL_REQUEST..."
 
-url=https://api.github.com/repos/sass/sass/pulls/$TRAVIS_PULL_REQUEST
+url=https://api.github.com/repos/sass/ruby-sass/pulls/$TRAVIS_PULL_REQUEST
 if [ -z "$GITHUB_AUTH" ]; then
     >&2 echo "Fetching pull request info without authentication"
     JSON=$(curl -L -sS $url)
