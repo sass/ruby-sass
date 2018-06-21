@@ -40,7 +40,7 @@ class ValueHelpersTest < MiniTest::Test
       hex_color("green")
     end
     assert_raises ArgumentError do
-      hex_color("#abcd")
+      hex_color("#abcde")
     end
   end
 
