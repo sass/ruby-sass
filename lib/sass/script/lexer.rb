@@ -368,24 +368,20 @@ MESSAGE
         # IDs in properties are used in the Basic User Interface Module
         # (http://www.w3.org/TR/css3-ui/).
         return unless scan(REGULAR_EXPRESSIONS[:id])
-        if @scanner[0] =~ /^\#[0-9a-fA-F]+$/
-          if @scanner[0].length == 4 || @scanner[0].length == 7
-            return [:color, Script::Value::Color.from_hex(@scanner[0])]
-          elsif @scanner[0].length == 5 || @scanner[0].length == 9
-            filename = @options[:filename]
-            Sass::Util.sass_warn <<MESSAGE
-DEPRECATION WARNING on line #{line}, column #{offset}#{" of #{filename}" if filename}:
-The value "#{@scanner[0]}" is currently parsed as a string, but it will be parsed as a color in
-future versions of Sass. Use "unquote('#{@scanner[0]}')" to continue parsing it as a string.
-MESSAGE
-          end
+        if @scanner[0] =~ /^\#[0-9a-fA-F]+$/ &&
+          (@scanner[0].length == 4 || @scanner[0].length == 5 ||
+           @scanner[0].length == 7 || @scanner[0].length == 9)
+          return [:color, Script::Value::Color.from_hex(@scanner[0])]
         end
         [:ident, @scanner[0]]
       end
 
       def color
         return unless @scanner.match?(REGULAR_EXPRESSIONS[:color])
-        return unless @scanner[0].length == 4 || @scanner[0].length == 7
+        unless @scanner[0].length == 4 || @scanner[0].length == 5 ||
+               @scanner[0].length == 7 || @scanner[0].length == 9
+          return
+        end
         script_color = Script::Value::Color.from_hex(scan(REGULAR_EXPRESSIONS[:color]))
         [:color, script_color]
       end
