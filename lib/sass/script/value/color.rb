@@ -277,13 +277,14 @@ module Sass::Script::Value
     #
     # @return [Color]
     def self.from_hex(hex_string, alpha = nil)
-      unless hex_string =~ /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i ||
-             hex_string =~ /^#?([0-9a-f])([0-9a-f])([0-9a-f])$/i
+      unless hex_string =~ /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?$/i ||
+             hex_string =~ /^#?([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])?$/i
         raise ArgumentError.new("#{hex_string.inspect} is not a valid hex color.")
       end
       red   = $1.ljust(2, $1).to_i(16)
       green = $2.ljust(2, $2).to_i(16)
       blue  = $3.ljust(2, $3).to_i(16)
+      alpha = $4.ljust(2, $4).to_i(16).to_f / 0xff if $4
 
       hex_string = "##{hex_string}" unless hex_string[0] == ?#
       attrs = {:red => red, :green => green, :blue => blue, :representation => hex_string}

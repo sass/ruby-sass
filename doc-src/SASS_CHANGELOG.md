@@ -42,6 +42,11 @@
 * Add support for importing an `_index.scss` or `_index.sass` file when
   importing a directory.
 
+### Backwards Incompatibilities -- Must Read!
+
+* Tokens such as `#abcd` that are ambiguous between ID strings and hex colors
+  with an alpha channel are now parsed as colors.
+
 ## 3.5.6 (22 March 2018)
 
 * Allow `!` in custom property values.

@@ -534,8 +534,6 @@ SASS
     assert_raise_message(Sass::SyntaxError,
       'Invalid CSS after "": expected expression (e.g. 1px, bold), was "#12"') {eval("#12")}
     assert_raise_message(Sass::SyntaxError,
-      'Invalid CSS after "": expected expression (e.g. 1px, bold), was "#1234"') {eval("#1234")}
-    assert_raise_message(Sass::SyntaxError,
       'Invalid CSS after "": expected expression (e.g. 1px, bold), was "#12345"') {eval("#12345")}
     assert_raise_message(Sass::SyntaxError, 'Invalid CSS after "": expected expression (e.g. ' \
       '1px, bold), was "#1234567"') {eval("#1234567")}
