@@ -47,10 +47,7 @@ module Sass::Script::Tree
     # @param wa [Boolean] See {Interpolation#whitespace_after}
     # @param originally_text [Boolean] See {Interpolation#originally_text}
     # @param warn_for_color [Boolean] See {Interpolation#warn_for_color}
-    # @comment
-    #   rubocop:disable ParameterLists
     def initialize(before, mid, after, wb, wa, opts = {})
-      # rubocop:enable ParameterLists
       @before = before
       @mid = mid
       @after = after

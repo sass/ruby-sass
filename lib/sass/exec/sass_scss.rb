@@ -256,8 +256,6 @@ MESSAGE
       Sass::Repl.new(@options).run
     end
 
-    # @comment
-    #   rubocop:disable MethodLength
     def watch_or_update
       require 'sass/plugin'
       Sass::Plugin.options.merge! @options[:for_engine]
@@ -359,8 +357,6 @@ WARNING
 
       Sass::Plugin.watch(files)
     end
-    # @comment
-    #   rubocop:enable MethodLength
 
     def run
       input = @options[:input]

@@ -499,7 +499,6 @@ END
       lines
     end
 
-    # @comment
     def try_comment(line, last, tab_str, comment_tab_str, index)
       return unless last && last.comment?
       # Nested comment stuff must be at least one whitespace char deeper
@@ -726,10 +725,7 @@ WARNING
       end
     end
 
-    # @comment
-    #   rubocop:disable ParameterLists
     def parse_property(name, parsed_name, value, prop, line, start_offset)
-      # rubocop:enable ParameterLists
 
       if name.start_with?('--')
         unless line.children.empty?
@@ -1038,8 +1034,6 @@ WARNING
       values
     end
 
-    # @comment
-    #   rubocop:disable MethodLength
     def parse_import_arg(scanner, offset)
       return if scanner.eos?
 
@@ -1114,8 +1108,6 @@ WARNING
       end
       node
     end
-    # @comment
-    #   rubocop:enable MethodLength
 
     def parse_mixin_directive(parent, line, root, value, offset)
       parse_mixin_definition(line)

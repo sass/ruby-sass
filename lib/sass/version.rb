@@ -42,7 +42,6 @@ module Sass
     #     }
     #
     # @return [{Symbol => String/Integer}] The version hash
-    # @comment
     def version
       return @@version if defined?(@@version)
 

@@ -1,9 +1,7 @@
 require 'sass/script/value/helpers'
 
 module Sass::Script
-  # @comment
   #   YARD can't handle some multiline tags, and we need really long tags for function declarations.
-  #   rubocop:disable LineLength
   # Methods in this module are accessible from the SassScript context.
   # For example, you can write
   #
@@ -364,9 +362,6 @@ module Sass::Script
   # representation) on those objects without first setting {Tree::Node#options=
   # the #options attribute}.
   #
-  # @comment
-  #   rubocop:enable LineLength
-  #   rubocop:disable ModuleLength
   module Functions
     @signatures = {}
 
@@ -1500,13 +1495,11 @@ module Sass::Script
     def unquote(string)
       unless string.is_a?(Sass::Script::Value::String)
         # Don't warn multiple times for the same source line.
-        # rubocop:disable GlobalVars
         $_sass_warned_for_unquote ||= Set.new
         frame = environment.stack.frames.last
         key = [frame.filename, frame.line] if frame
         return string if frame && $_sass_warned_for_unquote.include?(key)
         $_sass_warned_for_unquote << key if frame
-        # rubocop:enable GlobalVars
 
         Sass::Util.sass_warn(<<MESSAGE.strip)
 DEPRECATION WARNING: Passing #{string.to_sass}, a non-string value, to unquote()
@@ -2065,12 +2058,9 @@ MESSAGE
     #     will be bracketed. If this is `auto` (the default), the separator is
     #     determined as explained above.
     # @return [Sass::Script::Value::List]
-    # @comment
-    #   rubocop:disable ParameterLists
     def join(list1, list2,
              separator = identifier("auto"), bracketed = identifier("auto"),
              kwargs = nil, *rest)
-      # rubocop:enable ParameterLists
       if separator.is_a?(Hash)
         kwargs = separator
         separator = identifier("auto")
@@ -2913,10 +2903,7 @@ WARNING
         yield(value.value), value.numerator_units, value.denominator_units)
     end
 
-    # @comment
-    #   rubocop:disable ParameterLists
     def _adjust(color, amount, attr, range, op, units = "")
-      # rubocop:enable ParameterLists
       assert_type color, :Color, :color
       assert_type amount, :Number, :amount
       Sass::Util.check_range('Amount', range, amount, units)

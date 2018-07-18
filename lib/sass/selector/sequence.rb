@@ -344,8 +344,6 @@ module Sass
       #   be nil. Otherwise, this will contained the merged selector. Array
       #   elements are [Sass::Util#paths]-style options; conceptually, an "or"
       #   of multiple selectors.
-      # @comment
-      #   rubocop:disable MethodLength
       def merge_final_ops(seq1, seq2, res = [])
         ops1, ops2 = [], []
         ops1 << seq1.pop while seq1.last.is_a?(String)
@@ -427,8 +425,6 @@ module Sass
           return merge_final_ops(seq1, seq2, res)
         end
       end
-      # @comment
-      #   rubocop:enable MethodLength
 
       # Takes initial subsequences of `seq1` and `seq2` and returns all
       # orderings of those subsequences. The initial subsequences are determined

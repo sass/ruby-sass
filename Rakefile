@@ -27,7 +27,7 @@ task :test do
   test_cases = [
     {
       'env'   => {'MATHN' => 'true'},
-      'tasks' => ['test:ruby', 'test:spec', :rubocop]
+      'tasks' => ['test:ruby', 'test:spec']
     },
     {
       'env'   => {'MATHN' => 'false'},
@@ -108,20 +108,6 @@ def ruby_version_at_least?(version_string)
   ruby_version = Gem::Version.new(RUBY_VERSION.dup)
   version = Gem::Version.new(version_string)
   ruby_version >= version
-end
-
-begin
-  require 'rubocop/rake_task'
-  RuboCop = Rubocop unless defined?(RuboCop)
-  RuboCop::RakeTask.new do |t|
-    t.patterns = FileList["lib/**/*"]
-  end
-rescue LoadError
-  task :rubocop do
-    puts "Rubocop is disabled."
-    puts "Passing this check is required in order for your patch to be accepted."
-    puts "Install Rubocop and then run the style check with: rake rubocop."
-  end
 end
 
 # ----- Packaging -----
