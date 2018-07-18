@@ -3,7 +3,7 @@
 * Table of contents
 {:toc}
 
-## 3.5.7
+## 3.5.7 (18 July 2018)
 
 * Add a post-install message indicating that Ruby Sass is deprecated.
 
