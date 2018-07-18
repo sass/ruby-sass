@@ -11,8 +11,6 @@ class Sass::Tree::Visitors::Perform < Sass::Tree::Visitors::Base
     end
 
     # @api private
-    # @comment
-    #   rubocop:disable MethodLength
     def perform_arguments(callable, args, splat, environment)
       desc = "#{callable.type.capitalize} #{callable.name}"
       downcase_desc = "#{callable.type} #{callable.name}"
@@ -145,8 +143,6 @@ class Sass::Tree::Visitors::Perform < Sass::Tree::Visitors::Base
       end
     end
   end
-  # @comment
-  #   rubocop:enable MethodLength
 
   protected
 
@@ -351,7 +347,7 @@ WARNING
       mixin = @environment.mixin(node.name)
       raise Sass::SyntaxError.new("Undefined mixin '#{node.name}'.") unless mixin
 
-      if node.children.any? && !mixin.has_content
+      if node.has_children && !mixin.has_content
         raise Sass::SyntaxError.new(%(Mixin "#{node.name}" does not accept a content block.))
       end
 

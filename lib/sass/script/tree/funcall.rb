@@ -68,13 +68,11 @@ module Sass::Script::Tree
     def inspect
       args = @args.map {|a| a.inspect}.join(', ')
       keywords = @keywords.as_stored.to_a.map {|k, v| "$#{k}: #{v.inspect}"}.join(', ')
-      # rubocop:disable RedundantSelf
       if self.splat
         splat = args.empty? && keywords.empty? ? "" : ", "
         splat = "#{splat}#{self.splat.inspect}..."
         splat = "#{splat}, #{kwarg_splat.inspect}..." if kwarg_splat
       end
-      # rubocop:enable RedundantSelf
       "#{name}(#{args}#{', ' unless args.empty? || keywords.empty?}#{keywords}#{splat})"
     end
 
@@ -89,12 +87,10 @@ module Sass::Script::Tree
       args = @args.map(&arg_to_sass)
       keywords = @keywords.as_stored.to_a.map {|k, v| "$#{dasherize(k, opts)}: #{arg_to_sass[v]}"}
 
-      # rubocop:disable RedundantSelf
       if self.splat
         splat = "#{arg_to_sass[self.splat]}..."
         kwarg_splat = "#{arg_to_sass[self.kwarg_splat]}..." if self.kwarg_splat
       end
-      # rubocop:enable RedundantSelf
 
       arglist = [args, splat, keywords, kwarg_splat].flatten.compact.join(', ')
       "#{dasherize(name, opts)}(#{arglist})"

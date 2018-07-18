@@ -1,8 +1,6 @@
 module Sass::Script::Value
   # Provides helper functions for creating sass values from within ruby methods.
   # @since `3.3.0`
-  # @comment
-  #   rubocop:disable ModuleLength
   module Helpers
     # Construct a Sass Boolean.
     #

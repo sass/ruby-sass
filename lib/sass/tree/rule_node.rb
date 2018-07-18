@@ -141,9 +141,7 @@ module Sass::Tree
       parser = nil
       warnings = Sass.logger.capture do
         parser = Sass::SCSS::StaticParser.new(@rule.join.strip, nil, nil, 1)
-        # rubocop:disable RescueModifier
         @parsed_rules = parser.parse_selector rescue nil
-        # rubocop:enable RescueModifier
       end
 
       # If parsing produces a warning, throw away the result so we can parse
