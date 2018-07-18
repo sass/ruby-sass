@@ -7,6 +7,9 @@
 
 * Add a post-install message indicating that Ruby Sass is deprecated.
 
+* Properly emit an error when an empty block is passed to a mixin that doesn't
+  use `@content`.
+
 ## 3.5.6 (22 March 2018)
 
 * Allow `!` in custom property values.
