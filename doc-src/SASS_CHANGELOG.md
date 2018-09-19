@@ -37,7 +37,7 @@
 
 * Unitless numbers are no longer equal to numbers with units.
 
-## 3.6.0 (Unreleased)
+## 3.6.0 (19 September 2018)
 
 * Add support for importing an `_index.scss` or `_index.sass` file when
   importing a directory.
@@ -47,7 +47,7 @@
 * Tokens such as `#abcd` that are ambiguous between ID strings and hex colors
   with an alpha channel are now parsed as colors.
 
-## 3.5.7
+## 3.5.7 (18 July 2018)
 
 * Add a post-install message indicating that Ruby Sass is deprecated.
 

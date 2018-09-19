@@ -51,10 +51,7 @@ module Sass
       # @see Parser#initialize
       # @param allow_parent_ref [Boolean] Whether to allow the
       #   parent-reference selector, `&`, when parsing the document.
-      # @comment
-      #   rubocop:disable ParameterLists
       def initialize(str, filename, importer, line = 1, offset = 1, allow_parent_ref = true)
-        # rubocop:enable ParameterLists
         super(str, filename, importer, line, offset)
         @allow_parent_ref = allow_parent_ref
       end
