@@ -3,7 +3,7 @@
 * Table of contents
 {:toc}
 
-## 3.6.0 (Unreleased)
+## 3.6.0 (19 September 2018)
 
 * Add support for importing an `_index.scss` or `_index.sass` file when
   importing a directory.
