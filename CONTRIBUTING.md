@@ -18,7 +18,7 @@ is regularly merged into the one below: `stable` into `next`, `next` into
 `master`.
 
 * The `stable` branch is the default—it's what GitHub shows if you go to
-  [sass/sass](https://github.com/sass/sass), and it's the default place for pull
+  [sass/ruby-sass](https://github.com/sass/ruby-sass), and it's the default place for pull
   requests to go. This branch is where we work on the next patch release. Bug
   fixes and documentation improvements belong here, but not new features.
 
