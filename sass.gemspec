@@ -36,6 +36,10 @@ SASS_GEMSPEC = Gem::Specification.new do |spec|
   spec.test_files = Dir['test/**/*_test.rb']
   spec.license = "MIT"
 
+  if spec.respond_to?(:metadata)
+    spec.metadata['source_code_uri'] = 'https://github.com/sass/ruby-sass'
+  end
+
   spec.post_install_message = <<END
 
 Ruby Sass is deprecated and will be unmaintained as of 26 March 2019.
