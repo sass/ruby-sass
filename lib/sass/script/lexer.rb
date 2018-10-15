@@ -243,6 +243,29 @@ module Sass
         @scanner.string[old_pos...new_pos]
       end
 
+      # Runs a block, and rewinds the state of the lexer to the beginning of the
+      # block if it returns `nil` or `false`.
+      def try
+        old_pos = @scanner.pos
+        old_line = @line
+        old_offset = @offset
+        old_interpolation_stack = @interpolation_stack.dup
+        old_prev = @prev
+        old_tok = @tok
+        old_next_tok = @next_tok
+
+        result = yield
+        return result if result
+
+        @scanner.pos = old_pos
+        @line = old_line
+        @offset = old_offset
+        @interpolation_stack = old_interpolation_stack
+        @prev = old_prev
+        @tok = old_tok
+        @next_tok = old_next_tok
+      end
+
       private
 
       def read_token
@@ -278,7 +301,7 @@ module Sass
 
         variable || string(:double, false) || string(:single, false) || number || id || color ||
           selector || string(:uri, false) || raw(UNICODERANGE) || special_fun || special_val ||
-          ident_op || ident || op
+          ident_op || ident || op || unknown
       end
 
       def variable
@@ -451,6 +474,12 @@ MESSAGE
         name = OPERATORS[op]
         @interpolation_stack << nil if name == :begin_interpolation
         [name]
+      end
+
+      def unknown
+        char = scan(/./)
+        return unless char
+        [:unknown, char]
       end
 
       def raw(rx)
