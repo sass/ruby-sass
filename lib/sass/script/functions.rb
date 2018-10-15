@@ -664,15 +664,11 @@ module Sass::Script
       assert_type green, :Number, :green
       assert_type blue, :Number, :blue
 
-      color_attrs = [red, green, blue].map do |c|
-        if c.is_unit?("%")
-          c.value * 255 / 100.0
-        elsif c.unitless?
-          c.value
-        else
-          raise ArgumentError.new("Expected #{c} to be unitless or have a unit of % but got #{c}")
-        end
-      end
+      color_attrs = [
+        percentage_or_unitless(red, 255, "red"),
+        percentage_or_unitless(green, 255, "green"),
+        percentage_or_unitless(blue, 255, "blue")
+      ]
 
       # Don't store the string representation for function-created colors, both
       # because it's not very useful and because some functions aren't supported
@@ -737,8 +733,7 @@ module Sass::Script
           unquoted_string("rgba(#{color.red}, #{color.green}, #{color.blue}, #{alpha})")
         else
           assert_type alpha, :Number, :alpha
-          check_alpha_unit alpha, 'rgba'
-          color.with(:alpha => alpha.value)
+          color.with(:alpha => percentage_or_unitless(alpha, 1, "alpha"))
         end
       when 3
         if var?(args[0]) || var?(args[1]) || var?(args[2])
@@ -840,7 +835,6 @@ module Sass::Script
       assert_type saturation, :Number, :saturation
       assert_type lightness, :Number, :lightness
       assert_type alpha, :Number, :alpha
-      check_alpha_unit alpha, 'hsla'
 
       h = hue.value
       s = saturation.value
@@ -850,7 +844,8 @@ module Sass::Script
       # because it's not very useful and because some functions aren't supported
       # on older browsers.
       Sass::Script::Value::Color.new(
-        :hue => h, :saturation => s, :lightness => l, :alpha => alpha.value)
+        :hue => h, :saturation => s, :lightness => l,
+        :alpha => percentage_or_unitless(alpha, 1, "alpha"))
     end
     declare :hsla, [:hue, :saturation, :lightness, :alpha]
     declare :hsla, [:hue, :saturation, :lightness]
@@ -2911,19 +2906,14 @@ WARNING
       color.with(attr => color.send(attr).send(op, amount.value))
     end
 
-    def check_alpha_unit(alpha, function)
-      return if alpha.unitless?
-
-      if alpha.is_unit?("%")
-        Sass::Util.sass_warn(<<WARNING)
-DEPRECATION WARNING: Passing a percentage as the alpha value to #{function}() will be
-interpreted differently in future versions of Sass. For now, use #{alpha.value} instead.
-WARNING
+    def percentage_or_unitless(number, max, name)
+      if number.unitless?
+        value = number.value
+      elsif number.is_unit?("%")
+        value = max * number.value / 100.0;
       else
-        Sass::Util.sass_warn(<<WARNING)
-DEPRECATION WARNING: Passing a number with units as the alpha value to #{function}() is
-deprecated and will be an error in future versions of Sass. Use #{alpha.value} instead.
-WARNING
+        raise ArgumentError.new(
+          "$#{name}: Expected #{number} to have no units or \"%\"");
       end
     end
   end
