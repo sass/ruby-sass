@@ -190,6 +190,14 @@ module Sass
         @scanner.string[pos, 1]
       end
 
+      # Consumes and returns single raw character from the input stream.
+      #
+      # @return [String]
+      def next_char
+        unpeek!
+        scan(/./)
+      end
+
       # Returns the next token without moving the lexer forward.
       #
       # @return [Token] The next token
@@ -200,6 +208,7 @@ module Sass
       # Rewinds the underlying StringScanner
       # to before the token returned by \{#peek}.
       def unpeek!
+        raise "[BUG] Can't unpeek before a queued token!" if @next_tok
         return unless @tok
         @scanner.pos = @tok.pos
         @line = @tok.source_range.start_pos.line
@@ -264,6 +273,7 @@ module Sass
         @prev = old_prev
         @tok = old_tok
         @next_tok = old_next_tok
+        nil
       end
 
       private
@@ -301,7 +311,7 @@ module Sass
 
         variable || string(:double, false) || string(:single, false) || number || id || color ||
           selector || string(:uri, false) || raw(UNICODERANGE) || special_fun || special_val ||
-          ident_op || ident || op || unknown
+          ident_op || ident || op
       end
 
       def variable
@@ -474,12 +484,6 @@ MESSAGE
         name = OPERATORS[op]
         @interpolation_stack << nil if name == :begin_interpolation
         [name]
-      end
-
-      def unknown
-        char = scan(/./)
-        return unless char
-        [:unknown, char]
       end
 
       def raw(rx)

@@ -596,7 +596,7 @@ RUBY
         brackets = []
         loop do
           result << @lexer.str do
-            until @lexer.peek.nil? ||
+            until @lexer.done? ||
                   peek_toks(:begin_interpolation,
                             :end_interpolation,
                             :lcurly,
@@ -604,7 +604,7 @@ RUBY
                             :lsquare,
                             :rparen,
                             :rsquare)
-              @lexer.next
+              @lexer.next || @lexer.next_char
             end
           end
 
