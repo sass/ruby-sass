@@ -37,6 +37,25 @@
 
 * Unitless numbers are no longer equal to numbers with units.
 
+## 3.7.0 (Unreleased)
+
+* Add support for CSS's `min()` and `max()` [math functions][]. A `min()` and
+  `max()` call will continue to be parsed as a Sass function if it involves any
+  Sass-specific features like variables or function calls, but if it's valid
+  plain CSS (optionally with interpolation) it will be emitted as plain CSS instead.
+
+  See [the proposal][css-min-max] for details.
+
+[math functions]: https://drafts.csswg.org/css-values/#math-function
+
+### Backwards Incompatibilities -- Must Read!
+
+* Percentages passed as `$alpha` arguments to `rgba()` and `hsla()` are now
+  interpreted according to [the spec][alpha value], and all other units are
+  disallowed.
+
+[alpha value]: http://dev.w3.org/csswg/css-color/#typedef-alpha-value
+
 ## 3.6.0 (19 September 2018)
 
 * Add support for importing an `_index.scss` or `_index.sass` file when

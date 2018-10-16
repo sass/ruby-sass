@@ -344,7 +344,7 @@ RUBY
       unary :not, :ident
 
       def ident
-        return funcall unless (first = @lexer.peek)
+        return css_min_max unless (first = @lexer.peek)
 
         contents = []
         if first.type == :ident
@@ -355,7 +355,7 @@ RUBY
           contents << assert_expr(:expr)
           assert_tok(:end_interpolation)
         else
-          return funcall
+          return css_min_max
         end
 
         while (tok = @lexer.peek)
@@ -395,6 +395,121 @@ RUBY
           literal_node(
             Sass::Script::Value::String.new(first.value, :identifier),
             first.source_range)
+        end
+      end
+
+      def css_min_max
+        @lexer.try do
+          next unless tok = try_tok(:funcall)
+          next unless %w[min max].include?(tok.value.downcase)
+          next unless contents = min_max_contents
+          node(Sass::Script::Tree::StringInterpolation.new(
+                 ["#{tok.value}(", *contents], :identifier),
+               tok.source_range.start_pos, source_position)
+        end || funcall
+      end
+
+      def min_max_contents(allow_comma: true)
+        result = []
+        loop do
+          if tok = try_tok(:number)
+            result << tok.value.to_s
+          elsif value = min_max_interpolation
+            result << value
+          elsif value = min_max_calc
+            result << value.value
+          elsif value = min_max_function ||
+                        min_max_parens ||
+                        nested_min_max
+            result.concat value
+          else
+            return
+          end
+
+          if try_tok(:rparen)
+            result << ")"
+            return result
+          elsif tok = try_tok(:plus) || try_tok(:minus) || try_tok(:times) || try_tok(:div)
+            result << " #{Lexer::OPERATORS_REVERSE[tok.type]} "
+          elsif allow_comma && try_tok(:comma)
+            result << ", "
+          else
+            return
+          end
+        end
+      end
+
+      def min_max_interpolation
+        tok = try_tok(:begin_interpolation)
+        return unless tok
+        expr = assert_expr :expr
+        assert_tok :end_interpolation
+        expr
+      end
+
+      def min_max_function
+        return unless tok = peek_tok(:funcall)
+        return unless %w[calc env var].include?(tok.value.downcase)
+        @lexer.next
+        result = [tok.value, '(', *declaration_value, ')']
+        assert_tok :rparen
+        result
+      end
+
+      def min_max_calc
+        return unless tok = peek_tok(:special_fun)
+        return unless tok.value.value.downcase.start_with?("calc(")
+        @lexer.next.value
+      end
+
+      def min_max_parens
+        return unless try_tok :lparen
+        return unless contents = min_max_contents(allow_comma: false)
+        ['(', *contents]
+      end
+
+      def nested_min_max
+        return unless tok = peek_tok(:funcall)
+        return unless %w[min max].include?(tok.value.downcase)
+        @lexer.next
+        return unless contents = min_max_contents
+        [tok.value, '(', *contents]
+      end
+
+      def declaration_value
+        result = []
+        brackets = []
+        loop do
+          result << @lexer.str do
+            until @lexer.done? ||
+                  peek_toks(:begin_interpolation,
+                            :end_interpolation,
+                            :lcurly,
+                            :lparen,
+                            :lsquare,
+                            :rparen,
+                            :rsquare)
+              @lexer.next || @lexer.next_char
+            end
+          end
+
+          if try_tok(:begin_interpolation)
+            result << assert_expr(:expr)
+            assert_tok :end_interpolation
+          elsif tok = try_toks(:lcurly, :lparen, :lsquare)
+            brackets << case tok.type
+                        when :lcurly; :end_interpolation
+                        when :lparen; :rparen
+                        when :lsquare; :rsquare
+                        end
+            result << Lexer::OPERATORS_REVERSE[tok.type]
+          elsif brackets.empty?
+            return result
+          else
+            bracket = brackets.pop
+            assert_tok bracket
+            result << Lexer::OPERATORS_REVERSE[bracket]
+          end
         end
       end
 
@@ -639,7 +754,12 @@ RUBY
       def peek_tok(name)
         # Avoids an array allocation caused by argument globbing in the try_toks method.
         peeked = @lexer.peek
-        peeked && name == peeked.type
+        peeked && name == peeked.type && peeked
+      end
+
+      def peek_toks(*names)
+        peeked = @lexer.peek
+        peeked && names.include?(peeked.type) && peeked
       end
 
       def try_tok(name)
@@ -647,8 +767,7 @@ RUBY
       end
 
       def try_toks(*names)
-        peeked = @lexer.peek
-        peeked && names.include?(peeked.type) && @lexer.next
+        peek_toks(*names) && @lexer.next
       end
 
       def assert_done

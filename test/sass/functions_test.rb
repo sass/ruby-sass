@@ -123,20 +123,6 @@ class SassFunctionTest < MiniTest::Test
     assert_error_message("$alpha: \"foo\" is not a number for `hsla'", "hsla(10, 10, 10, \"foo\")");
   end
 
-  def test_hsla_percent_warning
-    assert_warning(<<WARNING) {evaluate("hsla(180, 60%, 50%, 40%)")}
-DEPRECATION WARNING: Passing a percentage as the alpha value to hsla() will be
-interpreted differently in future versions of Sass. For now, use 40 instead.
-WARNING
-  end
-
-  def test_hsla_unit_warning
-    assert_warning(<<WARNING) {evaluate("hsla(180, 60%, 50%, 40em)")}
-DEPRECATION WARNING: Passing a number with units as the alpha value to hsla() is
-deprecated and will be an error in future versions of Sass. Use 40 instead.
-WARNING
-  end
-
   def test_percentage
     assert_equal("50%",  evaluate("percentage(.5)"))
     assert_equal("100%", evaluate("percentage(1)"))
@@ -195,25 +181,29 @@ WARNING
   end
 
   def test_min
-    assert_equal("1", evaluate("min(1, 2, 3)"))
-    assert_equal("1", evaluate("min(3px, 2px, 1)"))
-    assert_equal("4em", evaluate("min(4em)"))
-    assert_equal("10cm", evaluate("min(10cm, 6in)"))
-    assert_equal("1q", evaluate("min(1cm, 1q)"))
+    # A trailing comma forces the function to be parsed as a Sass function,
+    # rather than a CSS math function.
+    assert_equal("1", evaluate("min(1, 2, 3,)"))
+    assert_equal("1", evaluate("min(3px, 2px, 1,)"))
+    assert_equal("4em", evaluate("min(4em,)"))
+    assert_equal("10cm", evaluate("min(10cm, 6in,)"))
+    assert_equal("1q", evaluate("min(1cm, 1q,)"))
 
     assert_error_message("#aaaaaa is not a number for `min'", "min(#aaa)")
-    assert_error_message("Incompatible units: 'px' and 'em'.", "min(3em, 4em, 1px)")
+    assert_error_message("Incompatible units: 'px' and 'em'.", "min(3em, 4em, 1px,)")
   end
 
   def test_max
-    assert_equal("3", evaluate("max(1, 2, 3)"))
-    assert_equal("3", evaluate("max(3, 2px, 1px)"))
-    assert_equal("4em", evaluate("max(4em)"))
-    assert_equal("6in", evaluate("max(10cm, 6in)"))
-    assert_equal("11mm", evaluate("max(11mm, 10q)"))
+    # A trailing comma forces the function to be parsed as a Sass function,
+    # rather than a CSS math function.
+    assert_equal("3", evaluate("max(1, 2, 3,)"))
+    assert_equal("3", evaluate("max(3, 2px, 1px,)"))
+    assert_equal("4em", evaluate("max(4em,)"))
+    assert_equal("6in", evaluate("max(10cm, 6in,)"))
+    assert_equal("11mm", evaluate("max(11mm, 10q,)"))
 
     assert_error_message("#aaaaaa is not a number for `max'", "max(#aaa)")
-    assert_error_message("Incompatible units: 'px' and 'em'.", "max(3em, 4em, 1px)")
+    assert_error_message("Incompatible units: 'px' and 'em'.", "max(3em, 4em, 1px,)")
   end
 
   def test_rgb
@@ -290,20 +280,6 @@ WARNING
     assert_error_message("wrong number of arguments (1 for 4) for `rgba'", "rgba(blue)");
     assert_error_message("wrong number of arguments (3 for 4) for `rgba'", "rgba(1, 2, 3)");
     assert_error_message("wrong number of arguments (5 for 4) for `rgba'", "rgba(1, 2, 3, 0.4, 5)");
-  end
-
-  def test_rgba_percent_warning
-    assert_warning(<<WARNING) {evaluate("rgba(1, 2, 3, 40%)")}
-DEPRECATION WARNING: Passing a percentage as the alpha value to rgba() will be
-interpreted differently in future versions of Sass. For now, use 40 instead.
-WARNING
-  end
-
-  def test_rgba_unit_warning
-    assert_warning(<<WARNING) {evaluate("rgba(1, 2, 3, 40em)")}
-DEPRECATION WARNING: Passing a number with units as the alpha value to rgba() is
-deprecated and will be an error in future versions of Sass. Use 40 instead.
-WARNING
   end
 
   def test_red
