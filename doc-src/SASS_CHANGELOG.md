@@ -5,6 +5,15 @@
 
 ## 3.7.0 (Unreleased)
 
+* Add support for CSS's `min()` and `max()` [math functions][]. A `min()` and
+  `max()` call will continue to be parsed as a Sass function if it involves any
+  Sass-specific features like variables or function calls, but if it's valid
+  plain CSS (optionally with interpolation) it will be emitted as plain CSS instead.
+
+  See [the proposal][css-min-max] for details.
+
+[math functions]: https://drafts.csswg.org/css-values/#math-function
+
 ### Backwards Incompatibilities -- Must Read!
 
 * Percentages passed as `$alpha` arguments to `rgba()` and `hsla()` are now
