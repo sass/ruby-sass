@@ -190,14 +190,6 @@ module Sass
         @scanner.string[pos, 1]
       end
 
-      # Consumes and returns single raw character from the input stream.
-      #
-      # @return [String]
-      def next_char
-        unpeek!
-        scan(/./)
-      end
-
       # Returns the next token without moving the lexer forward.
       #
       # @return [Token] The next token
@@ -208,7 +200,6 @@ module Sass
       # Rewinds the underlying StringScanner
       # to before the token returned by \{#peek}.
       def unpeek!
-        raise "[BUG] Can't unpeek before a queued token!" if @next_tok
         return unless @tok
         @scanner.pos = @tok.pos
         @line = @tok.source_range.start_pos.line
@@ -250,30 +241,6 @@ module Sass
         yield
         new_pos = @tok ? @tok.pos : @scanner.pos
         @scanner.string[old_pos...new_pos]
-      end
-
-      # Runs a block, and rewinds the state of the lexer to the beginning of the
-      # block if it returns `nil` or `false`.
-      def try
-        old_pos = @scanner.pos
-        old_line = @line
-        old_offset = @offset
-        old_interpolation_stack = @interpolation_stack.dup
-        old_prev = @prev
-        old_tok = @tok
-        old_next_tok = @next_tok
-
-        result = yield
-        return result if result
-
-        @scanner.pos = old_pos
-        @line = old_line
-        @offset = old_offset
-        @interpolation_stack = old_interpolation_stack
-        @prev = old_prev
-        @tok = old_tok
-        @next_tok = old_next_tok
-        nil
       end
 
       private

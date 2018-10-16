@@ -497,7 +497,7 @@ RUBY
       unary :not, :ident
 
       def ident
-        return css_min_max unless @lexer.peek && @lexer.peek.type == :ident
+        return funcall unless @lexer.peek && @lexer.peek.type == :ident
         return if @stop_at && @stop_at.include?(@lexer.peek.value)
 
         name = @lexer.next
@@ -511,120 +511,6 @@ RUBY
           literal_node(Sass::Script::Value::Null.new, name.source_range)
         else
           literal_node(Sass::Script::Value::String.new(name.value, :identifier), name.source_range)
-        end
-      end
-
-      def css_min_max
-        @lexer.try do
-          next unless tok = try_tok(:funcall)
-          next unless %w[min max].include?(tok.value.downcase)
-          next unless contents = min_max_contents
-          node(array_to_interpolation(["#{tok.value}(", *contents]),
-               tok.source_range.start_pos, source_position)
-        end || funcall
-      end
-
-      def min_max_contents(allow_comma: true)
-        result = []
-        loop do
-          if tok = try_tok(:number)
-            result << tok.value.to_s
-          elsif value = min_max_interpolation
-            result << value
-          elsif value = min_max_calc
-            result << value.value
-          elsif value = min_max_function ||
-                        min_max_parens ||
-                        nested_min_max
-            result.concat value
-          else
-            return
-          end
-
-          if try_tok(:rparen)
-            result << ")"
-            return result
-          elsif tok = try_tok(:plus) || try_tok(:minus) || try_tok(:times) || try_tok(:div)
-            result << " #{Lexer::OPERATORS_REVERSE[tok.type]} "
-          elsif allow_comma && try_tok(:comma)
-            result << ", "
-          else
-            return
-          end
-        end
-      end
-
-      def min_max_interpolation
-        tok = try_tok(:begin_interpolation)
-        return unless tok
-        expr = assert_expr :expr
-        assert_tok :end_interpolation
-        expr
-      end
-
-      def min_max_function
-        return unless tok = peek_tok(:funcall)
-        return unless %w[calc env var].include?(tok.value.downcase)
-        @lexer.next
-        result = [tok.value, '(', *declaration_value, ')']
-        assert_tok :rparen
-        result
-      end
-
-      def min_max_calc
-        return unless tok = peek_tok(:special_fun)
-        return unless tok.value.value.downcase.start_with?("calc(")
-        @lexer.next.value
-      end
-
-      def min_max_parens
-        return unless try_tok :lparen
-        return unless contents = min_max_contents(allow_comma: false)
-        ['(', *contents]
-      end
-
-      def nested_min_max
-        return unless tok = peek_tok(:funcall)
-        return unless %w[min max].include?(tok.value.downcase)
-        @lexer.next
-        return unless contents = min_max_contents
-        [tok.value, '(', *contents]
-      end
-
-      def declaration_value
-        result = []
-        brackets = []
-        loop do
-          result << @lexer.str do
-            until @lexer.done? ||
-                  peek_toks(:begin_interpolation,
-                            :end_interpolation,
-                            :lcurly,
-                            :lparen,
-                            :lsquare,
-                            :rparen,
-                            :rsquare)
-              @lexer.next || @lexer.next_char
-            end
-          end
-
-          if try_tok(:begin_interpolation)
-            result << assert_expr(:expr)
-            assert_tok :end_interpolation
-          elsif tok = try_toks(:lcurly, :lparen, :lsquare)
-            brackets << case tok.type
-                        when :lcurly; :end_interpolation
-                        when :lparen; :rparen
-                        when :lsquare; :rsquare
-                        end
-            result << Lexer::OPERATORS_REVERSE[tok.type]
-          elsif brackets.empty?
-            return result
-          else
-            bracket = brackets.pop
-            assert_tok bracket
-            result << Lexer::OPERATORS_REVERSE[bracket]
-          end
         end
       end
 
@@ -854,12 +740,7 @@ RUBY
       def peek_tok(name)
         # Avoids an array allocation caused by argument globbing in the try_toks method.
         peeked = @lexer.peek
-        peeked && name == peeked.type && peeked
-      end
-
-      def peek_toks(*names)
-        peeked = @lexer.peek
-        peeked && names.include?(peeked.type) && peeked
+        peeked && name == peeked.type
       end
 
       def try_tok(name)
@@ -867,7 +748,8 @@ RUBY
       end
 
       def try_toks(*names)
-        peek_toks(*names) && @lexer.next
+        peeked = @lexer.peek
+        peeked && names.include?(peeked.type) && @lexer.next
       end
 
       def assert_done
@@ -911,29 +793,6 @@ RUBY
         node.source_range = source_range
         node.filename = @options[:filename]
         node
-      end
-
-      # Converts an array of strings and expressions to a string interoplation
-      # object.
-      #
-      # @param array [Array<Script::Tree:Node | String>]
-      # @return [Script::Tree::StringInterpolation]
-      def array_to_interpolation(array)
-        Sass::Util.merge_adjacent_strings(array).reverse.inject(nil) do |after, value|
-          if value.is_a?(String)
-            literal = Sass::Script::Tree::Literal.new(
-              Sass::Script::Value::String.new(value))
-            next literal unless after
-            Sass::Script::Tree::StringInterpolation.new(literal, after.mid, after.after)
-          else
-            Sass::Script::Tree::StringInterpolation.new(
-              Sass::Script::Tree::Literal.new(
-                Sass::Script::Value::String.new('')),
-              value,
-              after || Sass::Script::Tree::Literal.new(
-                Sass::Script::Value::String.new('')))
-          end
-        end
       end
 
       # Checks a script node for any immediately-deprecated interpolations, and
