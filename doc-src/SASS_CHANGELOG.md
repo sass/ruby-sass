@@ -12,7 +12,12 @@
 
   See [the proposal][css-min-max] for details.
 
+* Add support for range-format media features like `(10px < width < 100px)`. See
+  [the proposal][media-ranges] for details.
+
 [math functions]: https://drafts.csswg.org/css-values/#math-function
+[css-min-max]: https://github.com/sass/language/blob/master/accepted/min-max.md
+[media-ranges]: https://github.com/sass/language/blob/master/accepted/media-ranges.md
 
 ### Backwards Incompatibilities -- Must Read!
 

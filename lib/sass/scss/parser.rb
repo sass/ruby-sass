@@ -477,12 +477,23 @@ module Sass
         return unless tok(/\(/)
         res = ['(']
         ss
-        res << sass_script(:parse)
+        stop_at = Set[:single_eq, :lt, :lte, :gt, :gte]
+        res << sass_script(:parse_until, stop_at)
 
         if tok(/:/)
           res << ': '
           ss
           res << sass_script(:parse)
+        elsif comparison1 = tok(/=|[<>]=?/)
+          res << ' ' << comparison1 << ' '
+          ss
+          res << sass_script(:parse_until, stop_at)
+          if ((comparison1 == ">" || comparison1 == ">=") && comparison2 = tok(/>=?/)) ||
+             ((comparison1 == "<" || comparison1 == "<=") && comparison2 = tok(/<=?/))
+            res << ' ' << comparison2 << ' '
+            ss
+            res << sass_script(:parse_until, stop_at)
+          end
         end
         res << tok!(/\)/)
         ss
