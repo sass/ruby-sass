@@ -24,7 +24,10 @@ module Sass
       end
 
       # Short-circuit all the SassScript-only productions
-      alias_method :interpolation, :space
+      def interpolation(first: nil, inner: :space)
+        first || send(inner)
+      end
+
       alias_method :or_expr, :div
       alias_method :unary_div, :ident
       alias_method :paren, :string

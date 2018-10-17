@@ -78,7 +78,7 @@ module Sass
       # Parses a SassScript expression,
       # ending it when it encounters one of the given identifier tokens.
       #
-      # @param tokens [#include?(String)] A set of strings that delimit the expression.
+      # @param tokens [#include?(String | Symbol)] A set of strings or symbols that delimit the expression.
       # @return [Script::Tree::Node] The root node of the parse tree
       # @raise [Sass::SyntaxError] if the expression isn't valid SassScript
       def parse_until(tokens)
@@ -270,7 +270,11 @@ module Sass
               interp = try_ops_after_interp(#{ops.inspect}, #{name.inspect})
               return interp if interp
               return unless e = #{sub}
-              while tok = try_toks(#{ops.map {|o| o.inspect}.join(', ')})
+
+              while tok = peek_toks(#{ops.map {|o| o.inspect}.join(', ')})
+                return e if @stop_at && @stop_at.include?(tok.type)
+                @lexer.next
+
                 if interp = try_op_before_interp(tok, e)
                   other_interp = try_ops_after_interp(#{ops.inspect}, #{name.inspect}, interp)
                   return interp unless other_interp
@@ -386,8 +390,11 @@ RUBY
 
       def try_ops_after_interp(ops, name, prev = nil)
         return unless @lexer.after_interpolation?
-        op = try_toks(*ops)
+        op = peek_toks(*ops)
         return unless op
+        return if @stop_at && @stop_at.include?(op.type)
+        @lexer.next
+
         interp = try_op_before_interp(op, prev, :after_interp)
         return interp if interp
 
@@ -416,7 +423,7 @@ RUBY
         while (interp = try_tok(:begin_interpolation))
           wb = @lexer.whitespace?(interp)
           char_before = @lexer.char(interp.pos - 1)
-          mid = assert_expr :expr
+          mid = without_stop_at {assert_expr :expr}
           assert_tok :end_interpolation
           wa = @lexer.whitespace?
           char_after = @lexer.char
@@ -555,11 +562,13 @@ RUBY
       end
 
       def min_max_interpolation
-        tok = try_tok(:begin_interpolation)
-        return unless tok
-        expr = assert_expr :expr
-        assert_tok :end_interpolation
-        expr
+        without_stop_at do
+          tok = try_tok(:begin_interpolation)
+          return unless tok
+          expr = without_stop_at {assert_expr :expr}
+          assert_tok :end_interpolation
+          expr
+        end
       end
 
       def min_max_function
@@ -644,28 +653,30 @@ RUBY
           return [], nil unless try_tok(:lparen)
         end
 
-        res = []
-        splat = nil
-        must_have_default = false
-        loop do
-          break if peek_tok(:rparen)
-          c = assert_tok(:const)
-          var = node(Script::Tree::Variable.new(c.value), c.source_range)
-          if try_tok(:colon)
-            val = assert_expr(:space)
-            must_have_default = true
-          elsif try_tok(:splat)
-            splat = var
-            break
-          elsif must_have_default
-            raise SyntaxError.new(
-              "Required argument #{var.inspect} must come before any optional arguments.")
+        without_stop_at do
+          res = []
+          splat = nil
+          must_have_default = false
+          loop do
+            break if peek_tok(:rparen)
+            c = assert_tok(:const)
+            var = node(Script::Tree::Variable.new(c.value), c.source_range)
+            if try_tok(:colon)
+              val = assert_expr(:space)
+              must_have_default = true
+            elsif try_tok(:splat)
+              splat = var
+              break
+            elsif must_have_default
+              raise SyntaxError.new(
+                "Required argument #{var.inspect} must come before any optional arguments.")
+            end
+            res << [var, val]
+            break unless try_tok(:comma)
           end
-          res << [var, val]
-          break unless try_tok(:comma)
+          assert_tok(:rparen)
+          return res, splat
         end
-        assert_tok(:rparen)
-        return res, splat
       end
 
       def fn_arglist
@@ -677,36 +688,38 @@ RUBY
       end
 
       def arglist(subexpr, description)
-        args = []
-        keywords = Sass::Util::NormalizedMap.new
-        splat = nil
-        while (e = send(subexpr))
-          if @lexer.peek && @lexer.peek.type == :colon
-            name = e
-            @lexer.expected!("comma") unless name.is_a?(Tree::Variable)
-            assert_tok(:colon)
-            value = assert_expr(subexpr, description)
+        without_stop_at do
+          args = []
+          keywords = Sass::Util::NormalizedMap.new
+          splat = nil
+          while (e = send(subexpr))
+            if @lexer.peek && @lexer.peek.type == :colon
+              name = e
+              @lexer.expected!("comma") unless name.is_a?(Tree::Variable)
+              assert_tok(:colon)
+              value = assert_expr(subexpr, description)
 
-            if keywords[name.name]
-              raise SyntaxError.new("Keyword argument \"#{name.to_sass}\" passed more than once")
+              if keywords[name.name]
+                raise SyntaxError.new("Keyword argument \"#{name.to_sass}\" passed more than once")
+              end
+
+              keywords[name.name] = value
+            else
+              if try_tok(:splat)
+                return args, keywords, splat, e if splat
+                splat, e = e, nil
+              elsif splat
+                raise SyntaxError.new("Only keyword arguments may follow variable arguments (...).")
+              elsif !keywords.empty?
+                raise SyntaxError.new("Positional arguments must come before keyword arguments.")
+              end
+              args << e if e
             end
 
-            keywords[name.name] = value
-          else
-            if try_tok(:splat)
-              return args, keywords, splat, e if splat
-              splat, e = e, nil
-            elsif splat
-              raise SyntaxError.new("Only keyword arguments may follow variable arguments (...).")
-            elsif !keywords.empty?
-              raise SyntaxError.new("Positional arguments must come before keyword arguments.")
-            end
-            args << e if e
+            return args, keywords, splat unless try_tok(:comma)
           end
-
-          return args, keywords, splat unless try_tok(:comma)
+          return args, keywords
         end
-        return args, keywords
       end
 
       def raw
@@ -720,7 +733,7 @@ RUBY
         return square_list unless first
         str = literal_node(first.value, first.source_range)
         return str unless try_tok(:string_interpolation)
-        mid = assert_expr :expr
+        mid = without_stop_at {assert_expr :expr}
         assert_tok :end_interpolation
         last = assert_expr(:special_fun)
         node(
@@ -732,54 +745,58 @@ RUBY
         start_pos = source_position
         return paren unless try_tok(:lsquare)
 
-        space_start_pos = source_position
-        e = interpolation(inner: :or_expr)
-        separator = nil
-        if e
-          elements = [e]
-          while (e = interpolation(inner: :or_expr))
-            elements << e
-          end
-
-          # If there's a comma after a space-separated list, it's actually a
-          # space-separated list nested in a comma-separated list.
-          if try_tok(:comma)
-            e = if elements.length == 1
-                  elements.first
-                else
-                  node(
-                    Sass::Script::Tree::ListLiteral.new(elements, separator: :space),
-                    space_start_pos)
-                end
+        without_stop_at do
+          space_start_pos = source_position
+          e = interpolation(inner: :or_expr)
+          separator = nil
+          if e
             elements = [e]
-
-            while (e = space)
+            while (e = interpolation(inner: :or_expr))
               elements << e
-              break unless try_tok(:comma)
             end
-            separator = :comma
+
+            # If there's a comma after a space-separated list, it's actually a
+            # space-separated list nested in a comma-separated list.
+            if try_tok(:comma)
+              e = if elements.length == 1
+                    elements.first
+                  else
+                    node(
+                      Sass::Script::Tree::ListLiteral.new(elements, separator: :space),
+                      space_start_pos)
+                  end
+              elements = [e]
+
+              while (e = space)
+                elements << e
+                break unless try_tok(:comma)
+              end
+              separator = :comma
+            else
+              separator = :space if elements.length > 1
+            end
           else
-            separator = :space if elements.length > 1
+            elements = []
           end
-        else
-          elements = []
+
+          assert_tok(:rsquare)
+          end_pos = source_position
+
+          node(Sass::Script::Tree::ListLiteral.new(elements, separator: separator, bracketed: true),
+               start_pos, end_pos)
         end
-
-        assert_tok(:rsquare)
-        end_pos = source_position
-
-        node(Sass::Script::Tree::ListLiteral.new(elements, separator: separator, bracketed: true),
-             start_pos, end_pos)
       end
 
       def paren
         return variable unless try_tok(:lparen)
-        start_pos = source_position
-        e = map
-        e.force_division! if e
-        end_pos = source_position
-        assert_tok(:rparen)
-        e || node(Sass::Script::Tree::ListLiteral.new([]), start_pos, end_pos)
+        without_stop_at do
+          start_pos = source_position
+          e = map
+          e.force_division! if e
+          end_pos = source_position
+          assert_tok(:rparen)
+          e || node(Sass::Script::Tree::ListLiteral.new([]), start_pos, end_pos)
+        end
       end
 
       def variable
@@ -796,7 +813,7 @@ RUBY
         return str unless try_tok(:string_interpolation)
         mid = assert_expr :expr
         assert_tok :end_interpolation
-        last = assert_expr(:string)
+        last = without_stop_at {assert_expr(:string)}
         node(Tree::StringInterpolation.new(str, mid, last), first.source_range.start_pos)
       end
 
@@ -879,6 +896,14 @@ RUBY
           return if @lexer.done?
           @lexer.expected!(EXPR_NAMES[:default])
         end
+      end
+
+      def without_stop_at
+        old_stop_at = @stop_at
+        @stop_at = nil
+        yield
+      ensure
+        @stop_at = old_stop_at
       end
 
       # @overload node(value, source_range)
