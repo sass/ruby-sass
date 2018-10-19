@@ -1022,8 +1022,8 @@ SCSS
 
   def test_escapes_in_selectors
     assert_selector_parses('.\!foo')
-    assert_selector_parses('.\66 foo')
-    assert_selector_parses('.\21 foo')
+    assert_equal ".ffoo {\n  a: b; }\n", render('.\66 foo {a: b}')
+    assert_equal ".\\!foo {\n  a: b; }\n", render('.\21 foo {a: b}')
   end
 
   def test_subject_selector_deprecation

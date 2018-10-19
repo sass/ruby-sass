@@ -938,7 +938,7 @@ SCSS
   def test_identifier_units
     assert_equal "5-foo", resolve("2-foo + 3-foo")
     assert_equal "5-foo-", resolve("2-foo- + 3-foo-")
-    assert_equal "5-\\u2603", resolve("2-\\u2603 + 3-\\u2603")
+    assert_equal "5-u2603", resolve("2-\\u2603 + 3-\\u2603")
   end
 
   def test_backslash_newline_in_string

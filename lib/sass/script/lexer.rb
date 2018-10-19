@@ -295,7 +295,7 @@ module Sass
             return special_fun_body(interp_value)
           elsif interp_type.nil?
             if @scanner.string[@scanner.pos - 1] == '}' && scan(REGULAR_EXPRESSIONS[:mid_ident])
-              return [@scanner[2] ? :funcall : :ident, @scanner[1]]
+              return [@scanner[2] ? :funcall : :ident, Sass::Util.normalize_ident_escapes(@scanner[1], start: false)]
             end
           else
             raise "[BUG]: Unknown interp_type #{interp_type}" unless interp_type == :string
@@ -314,13 +314,12 @@ module Sass
 
       def _variable(rx)
         return unless scan(rx)
-
-        [:const, @scanner[2]]
+        [:const, Sass::Util.normalize_ident_escapes(@scanner[2])]
       end
 
       def ident
         return unless scan(REGULAR_EXPRESSIONS[:ident])
-        [@scanner[2] ? :funcall : :ident, @scanner[1]]
+        [@scanner[2] ? :funcall : :ident, Sass::Util.normalize_ident_escapes(@scanner[1])]
       end
 
       def string(re, open)
@@ -376,7 +375,9 @@ MESSAGE
 
         value = (@scanner[1] ? @scanner[1].to_f : @scanner[2].to_i) * (minus ? -1 : 1)
         value *= 10**@scanner[3].to_i if @scanner[3]
-        script_number = Script::Value::Number.new(value, Array(@scanner[4]))
+        units = @scanner[4]
+        units = Sass::Util::normalize_ident_escapes(units) if units
+        script_number = Script::Value::Number.new(value, Array(units))
         [:number, script_number]
       end
 
@@ -400,7 +401,7 @@ MESSAGE
            @scanner[0].length == 7 || @scanner[0].length == 9)
           return [:color, Script::Value::Color.from_hex(@scanner[0])]
         end
-        [:ident, @scanner[0]]
+        [:ident, Sass::Util.normalize_ident_escapes(@scanner[0])]
       end
 
       def color

@@ -49,9 +49,14 @@
 * Add support for range-format media features like `(10px < width < 100px)`. See
   [the proposal][media-ranges] for details.
 
+* Normalize escape codes in identifiers so that, for example, `éclair` and
+  `\E9clair` are parsed to the same value. See
+  [the proposal][identifier-escapes] for details.
+
 [math functions]: https://drafts.csswg.org/css-values/#math-function
 [css-min-max]: https://github.com/sass/language/blob/master/accepted/min-max.md
 [media-ranges]: https://github.com/sass/language/blob/master/accepted/media-ranges.md
+[identifier-escapes]: https://github.com/sass/language/blob/master/accepted/identifier-escapes.md
 
 ### Backwards Incompatibilities -- Must Read!
 
