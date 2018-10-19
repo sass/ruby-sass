@@ -71,7 +71,7 @@ module Sass
       def var_expr; nil; end
       def interp_string; (s = tok(STRING)) && [s]; end
       def interp_uri; (s = tok(URI)) && [s]; end
-      def interp_ident(ident = IDENT); (s = tok(ident)) && [s]; end
+      def interp_ident; (s = ident) && [s]; end
       def use_css_import?; true; end
 
       def special_directive(name, start_pos)
@@ -185,25 +185,25 @@ MESSAGE
 
       def parent_selector
         return unless @allow_parent_ref && tok(/&/)
-        Selector::Parent.new(tok(NAME))
+        Selector::Parent.new(name)
       end
 
       def class_selector
         return unless tok(/\./)
         @expected = "class name"
-        Selector::Class.new(tok!(IDENT))
+        Selector::Class.new(ident!)
       end
 
       def id_selector
         return unless tok(/#(?!\{)/)
         @expected = "id name"
-        Selector::Id.new(tok!(NAME))
+        Selector::Id.new(name!)
       end
 
       def placeholder_selector
         return unless tok(/%/)
         @expected = "placeholder name"
-        Selector::Placeholder.new(tok!(IDENT))
+        Selector::Placeholder.new(ident!)
       end
 
       def element_name
@@ -218,13 +218,13 @@ MESSAGE
       end
 
       def qualified_name(allow_star_name = false)
-        name = tok(IDENT) || tok(/\*/) || (tok?(/\|/) && "")
+        name = ident || tok(/\*/) || (tok?(/\|/) && "")
         return unless name
         return nil, name unless tok(/\|/)
 
-        return name, tok!(IDENT) unless allow_star_name
+        return name, ident! unless allow_star_name
         @expected = "identifier or *"
-        return name, tok(IDENT) || tok!(/\*/)
+        return name, ident || tok!(/\*/)
       end
 
       def attrib
@@ -242,21 +242,21 @@ MESSAGE
         if op
           @expected = "identifier or string"
           ss
-          val = tok(IDENT) || tok!(STRING)
+          val = ident || tok!(STRING)
           ss
         end
-        flags = tok(IDENT) || tok(STRING)
+        flags = ident || tok(STRING)
         tok!(/\]/)
 
         Selector::Attribute.new(name, ns, op, val, flags)
       end
 
       def attrib_name!
-        if (name_or_ns = tok(IDENT))
+        if (name_or_ns = ident)
           # E, E|E
           if tok(/\|(?!=)/)
             ns = name_or_ns
-            name = tok(IDENT)
+            name = ident
           else
             name = name_or_ns
           end
@@ -264,7 +264,7 @@ MESSAGE
           # *|E or |E
           ns = tok(/\*/) || ""
           tok!(/\|/)
-          name = tok!(IDENT)
+          name = ident!
         end
         return ns, name
       end
@@ -279,7 +279,7 @@ MESSAGE
         s = tok(/::?/)
         return unless s
         @expected = "pseudoclass or pseudoelement"
-        name = tok!(IDENT)
+        name = ident!
         if tok(/\(/)
           ss
           deprefixed = deprefix(name)
@@ -342,7 +342,7 @@ MESSAGE
       end
 
       def keyframes_selector_component
-        tok(IDENT) || tok(PERCENTAGE)
+        ident || tok(PERCENTAGE)
       end
 
       @sass_script_parser = Class.new(Sass::Script::CssParser)
