@@ -258,6 +258,37 @@ module Sass
       arr
     end
 
+    # Normalizes identifier escapes.
+    #
+    # See https://github.com/sass/language/blob/master/accepted/identifier-escapes.md.
+    #
+    # @param ident [String]
+    # @return [String]
+    def normalize_ident_escapes(ident, start: true)
+      ident.gsub(/(^)?(#{Sass::SCSS::RX::ESCAPE})/) do |s|
+        at_start = start && $1
+        char = escaped_char(s)
+        next char if char =~ (at_start ? Sass::SCSS::RX::NMSTART : Sass::SCSS::RX::NMCHAR)
+        if char =~ (at_start ? /[\x0-\x8\xA-\x1F\x7F0-9]/ : /[\x0-\x8\xA-\x1F\x7F]/)
+          "\\#{char.ord.to_s(16)} "
+        else
+          "\\#{char}"
+        end
+      end
+    end
+
+    # Returns the character encoded by the given escape sequence.
+    #
+    # @param escape [String]
+    # @return [String]
+    def escaped_char(escape)
+      if escape =~ /^\\([0-9a-fA-F]{1,6})[ \t\r\n\f]?/
+        $1.to_i(16).chr(Encoding::UTF_8)
+      else
+        escape[1]
+      end
+    end
+
     # Return an array of all possible paths through the given arrays.
     #
     # @param arrs [Array<Array>]

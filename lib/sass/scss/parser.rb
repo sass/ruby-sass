@@ -203,7 +203,7 @@ module Sass
       def directive
         start_pos = source_position
         return unless tok(/@/)
-        name = tok!(IDENT)
+        name = ident!
         ss
 
         if (dir = special_directive(name, start_pos))
@@ -240,14 +240,14 @@ module Sass
       end
 
       def mixin_directive(start_pos)
-        name = tok! IDENT
+        name = ident!
         args, splat = sass_script(:parse_mixin_definition_arglist)
         ss
         block(node(Sass::Tree::MixinDefNode.new(name, args, splat), start_pos), :directive)
       end
 
       def include_directive(start_pos)
-        name = tok! IDENT
+        name = ident!
         args, keywords, splat, kwarg_splat = sass_script(:parse_mixin_include_arglist)
         ss
         include_node = node(
@@ -266,7 +266,7 @@ module Sass
       end
 
       def function_directive(start_pos)
-        name = tok! IDENT
+        name = ident!
         args, splat = sass_script(:parse_function_definition_arglist)
         ss
         block(node(Sass::Tree::FunctionNode.new(name, args, splat), start_pos), :function)
@@ -286,7 +286,7 @@ module Sass
 
       def for_directive(start_pos)
         tok!(/\$/)
-        var = tok! IDENT
+        var = ident!
         ss
 
         tok!(/from/)
@@ -303,12 +303,12 @@ module Sass
 
       def each_directive(start_pos)
         tok!(/\$/)
-        vars = [tok!(IDENT)]
+        vars = [ident!]
         ss
         while tok(/,/)
           ss
           tok!(/\$/)
-          vars << tok!(IDENT)
+          vars << ident!
           ss
         end
 
@@ -553,10 +553,10 @@ module Sass
       end
 
       def at_root_directive_list
-        return unless (first = tok(IDENT))
+        return unless (first = ident)
         arr = [first]
         ss
-        while (e = tok(IDENT))
+        while (e = ident)
           arr << e
           ss
         end
@@ -647,12 +647,12 @@ module Sass
       def variable
         return unless tok(/\$/)
         start_pos = source_position
-        name = tok!(IDENT)
+        name = ident!
         ss; tok!(/:/); ss
 
         expr = sass_script(:parse)
         while tok(/!/)
-          flag_name = tok!(IDENT)
+          flag_name = ident!
           if flag_name == 'default'
             guarded ||= true
           elsif flag_name == 'global'
@@ -1048,7 +1048,7 @@ module Sass
       def var_expr
         return unless tok(/\$/)
         line = @line
-        var = Sass::Script::Tree::Variable.new(tok!(IDENT))
+        var = Sass::Script::Tree::Variable.new(ident!)
         var.line = line
         var
       end
@@ -1086,11 +1086,27 @@ module Sass
         res
       end
 
-      def interp_ident(start = IDENT)
-        val = tok(start) || interpolation(:warn_for_color) || tok(IDENT_HYPHEN_INTERP)
+      def ident
+        (ident = tok(IDENT)) && Sass::Util.normalize_ident_escapes(ident)
+      end
+
+      def ident!
+        Sass::Util.normalize_ident_escapes(tok!(IDENT))
+      end
+
+      def name
+        (name = tok(NAME)) && Sass::Util.normalize_ident_escapes(name)
+      end
+
+      def name!
+        Sass::Util.normalize_ident_escapes(tok!(NAME))
+      end
+
+      def interp_ident
+        val = ident || interpolation(:warn_for_color) || tok(IDENT_HYPHEN_INTERP)
         return unless val
         res = [val]
-        while (val = tok(NAME) || interpolation(:warn_for_color))
+        while (val = name || interpolation(:warn_for_color))
           res << val
         end
         res

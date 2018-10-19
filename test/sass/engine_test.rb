@@ -3325,7 +3325,7 @@ SASS
 
   def test_escaped_semicolons_are_not_compressed
     assert_equal(<<'CSS', render(<<'SASS', :syntax => :scss, :style => :compressed))
-div{color:#f00000\9\0\;}
+div{color:#f00000\	\0 \;}
 CSS
 div {
  color: #f00000\9\0\;
