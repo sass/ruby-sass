@@ -945,7 +945,7 @@ RUBY
       # @return [Script::Tree::StringInterpolation]
       def array_to_interpolation(array)
         Sass::Util.merge_adjacent_strings(array).reverse.inject(nil) do |after, value|
-          if value.is_a?(String)
+          if value.is_a?(::String)
             literal = Sass::Script::Tree::Literal.new(
               Sass::Script::Value::String.new(value))
             next literal unless after
