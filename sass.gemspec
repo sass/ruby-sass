@@ -12,6 +12,8 @@ SASS_GEMSPEC = Gem::Specification.new do |spec|
   spec.authors = ['Natalie Weizenbaum', 'Chris Eppstein', 'Hampton Catlin']
   spec.email = 'sass-lang@googlegroups.com'
   spec.description = <<-END
+      Ruby Sass is deprecated! See https://sass-lang.com/ruby-sass for details.
+
       Sass makes CSS fun again. Sass is an extension of CSS, adding
       nested rules, variables, mixins, selector inheritance, and more.
       It's translated to well-formatted, standard CSS using the
