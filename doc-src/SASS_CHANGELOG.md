@@ -3,7 +3,7 @@
 * Table of contents
 {:toc}
 
-## 3.7.0 (Unreleased)
+## 3.7.0 (6 November 2018)
 
 * Add support for CSS's `min()` and `max()` [math functions][]. A `min()` and
   `max()` call will continue to be parsed as a Sass function if it involves any
