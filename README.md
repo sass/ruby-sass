@@ -1,3 +1,13 @@
+## Ruby Sass is Deprecated!
+
+Ruby Sass is in a sunset period where only critical bugs and CSS compatibility
+issues will be fixed. It will be completely unmaintained as of 26 March 2019.
+See [the Sass website][] for details, and consider switching to the [`sassc`
+gem][]
+
+[the Sass website]: https://sass-lang.com/ruby-sass
+[`sassc` gem]: https://rubygems.org/gems/sassc
+
 # Sass [![Travis Build Status](https://travis-ci.org/sass/ruby-sass.svg?branch=master)](https://travis-ci.org/sass/ruby-sass) [![Gem Version](https://badge.fury.io/rb/sass.svg)](http://badge.fury.io/rb/sass) [![Inline docs](http://inch-ci.org/github/sass/sass.svg)](http://inch-ci.org/github/sass/sass)
 
 **Sass makes CSS fun again**. Sass is an extension of CSS,
