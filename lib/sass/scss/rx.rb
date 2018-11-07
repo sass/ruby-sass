@@ -52,7 +52,7 @@ module Sass
       UNICODE  = /\\#{H}{1,6}[ \t\r\n\f]?/
       s = '\u{80}-\u{D7FF}\u{E000}-\u{FFFD}\u{10000}-\u{10FFFF}'
       NONASCII = /[#{s}]/
-      ESCAPE   = /#{UNICODE}|\\[ -~#{s}]/
+      ESCAPE   = /#{UNICODE}|\\[^0-9a-fA-F\r\n\f]/
       NMSTART  = /[_a-zA-Z]|#{NONASCII}|#{ESCAPE}/
       NMCHAR   = /[a-zA-Z0-9_-]|#{NONASCII}|#{ESCAPE}/
       STRING1  = /\"((?:[^\n\r\f\\"]|\\#{NL}|#{ESCAPE})*)\"/
