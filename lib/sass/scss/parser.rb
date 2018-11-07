@@ -992,7 +992,7 @@ module Sass
         # This results in a dramatic speed increase.
         if (val = tok(STATIC_VALUE))
           # If val ends with escaped whitespace, leave it be.
-          val = val.lstrip.sub(/(?<!\\)\s*$/, '\1)')
+          val = val.lstrip.sub(/(?<!\\)\s*$/, '\1')
           str = Sass::Script::Tree::Literal.new(Sass::Script::Value::String.new(val.strip))
           str.line = start_pos.line
           str.source_range = range(start_pos)
