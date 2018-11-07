@@ -3,7 +3,7 @@
 * Table of contents
 {:toc}
 
-## 3.7.1 (Unreleased)
+## 3.7.1 (7 November 2018)
 
 * Properly handle escaped whitespace and other unusual characters.
 
