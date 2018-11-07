@@ -553,7 +553,7 @@ WARNING
   end
 
   def run_interp(text)
-    run_interp_no_strip(text).strip
+    Sass::Util.strip_except_escapes(run_interp_no_strip(text))
   end
 
   def handle_import_loop!(node)

@@ -246,15 +246,15 @@ module Sass
       res
     end
 
-    # Destructively strips whitespace from the beginning and end
-    # of the first and last elements, respectively,
-    # in the array (if those elements are strings).
+    # Destructively strips whitespace from the beginning and end of the first
+    # and last elements, respectively, in the array (if those elements are
+    # strings). Preserves CSS escapes at the end of the array.
     #
     # @param arr [Array]
     # @return [Array] `arr`
     def strip_string_array(arr)
       arr.first.lstrip! if arr.first.is_a?(String)
-      arr.last.rstrip! if arr.last.is_a?(String)
+      arr[-1] = Sass::Util.rstrip_except_escapes(arr[-1]) if arr.last.is_a?(String)
       arr
     end
 
@@ -287,6 +287,24 @@ module Sass
       else
         escape[1]
       end
+    end
+
+    # Like [String#strip], but preserves escaped whitespace at the end of the
+    # string.
+    #
+    # @param string [String]
+    # @return [String]
+    def strip_except_escapes(string)
+      rstrip_except_escapes(string.lstrip)
+    end
+
+    # Like [String#rstrip], but preserves escaped whitespace at the end of the
+    # string.
+    #
+    # @param string [String]
+    # @return [String]
+    def rstrip_except_escapes(string)
+      string.sub(/(?<!\\)\s+$/, '')
     end
 
     # Return an array of all possible paths through the given arrays.

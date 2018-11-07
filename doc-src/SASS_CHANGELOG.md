@@ -5,7 +5,7 @@
 
 ## 3.7.2 (Unreleased)
 
-* Fix another escaped-whitespace edge case.
+* Fix more escaped-whitespace edge cases.
 
 ## 3.7.1 (7 November 2018)
 
