@@ -3,6 +3,10 @@
 * Table of contents
 {:toc}
 
+## 3.7.1 (Unreleased)
+
+* Properly handle escaped whitespace and other unusual characters.
+
 ## 3.7.0 (6 November 2018)
 
 * Add support for CSS's `min()` and `max()` [math functions][]. A `min()` and
