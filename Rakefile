@@ -63,41 +63,30 @@ namespace :test do
 
   desc "Run sass-spec tests against the local code."
   task :spec do
-    require "yaml"
-    sass_spec_options = YAML.load_file(scope("test/sass-spec.yml"))
-    enabled = sass_spec_options.delete(:enabled)
-    unless enabled
-      puts "SassSpec tests are disabled."
-      next
-    end
-    if ruby_version_at_least?("1.9.2")
-      old_load_path = $:.dup
+    old_load_path = $:.dup
+    begin
+      $:.unshift(File.join(File.dirname(__FILE__), "lib"))
       begin
-        $:.unshift(File.join(File.dirname(__FILE__), "lib"))
-        begin
-          require 'sass_spec'
-        rescue LoadError
-          puts "You probably forgot to run: bundle exec rake"
-          raise
-        end
-        default_options = {
-          :spec_directory => SassSpec::SPEC_DIR,
-          :engine_adapter => SassEngineAdapter.new,
-          :generate => false,
-          :tap => false,
-          :skip => false,
-          :verbose => false,
-          :filter => "",
-          :limit => -1,
-          :unexpected_pass => false,
-          :nuke => false,
-        }
-        SassSpec::Runner.new(default_options.merge(sass_spec_options)).run || exit(1)
-      ensure
-        $:.replace(old_load_path)
+        require 'sass_spec'
+      rescue LoadError
+        puts "You probably forgot to run: bundle exec rake"
+        raise
       end
-    else
-      "Skipping sass-spec on ruby versions less than 1.9.2"
+      SassSpec::Runner.new(
+        language_version: get_version[/^\d+\.\d+/],
+        spec_directory: SassSpec::SPEC_DIR,
+        engine_adapter: SassEngineAdapter.new,
+        generate: false,
+        tap: false,
+        skip: false,
+        verbose: false,
+        filter: "",
+        limit: -1,
+        unexpected_pass: false,
+        nuke: false,
+      ).run || exit(1)
+    ensure
+      $:.replace(old_load_path)
     end
   end
 end
