@@ -3,7 +3,7 @@
 * Table of contents
 {:toc}
 
-## 3.7.2 (Unreleased)
+## 3.7.2 (8 November 2018)
 
 * Fix more escaped-whitespace edge cases.
 
