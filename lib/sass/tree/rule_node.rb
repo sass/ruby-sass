@@ -140,7 +140,8 @@ module Sass::Tree
       # When we get it, we'll set it on the parsed rules if possible.
       parser = nil
       warnings = Sass.logger.capture do
-        parser = Sass::SCSS::StaticParser.new(@rule.join.strip, nil, nil, 1)
+        parser = Sass::SCSS::StaticParser.new(
+          Sass::Util.strip_except_escapes(@rule.join), nil, nil, 1)
         @parsed_rules = parser.parse_selector rescue nil
       end
 

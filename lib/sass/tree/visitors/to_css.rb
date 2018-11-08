@@ -298,7 +298,7 @@ class Sass::Tree::Visitors::ToCss < Sass::Tree::Visitors::Base
           rule_part.gsub!(/nth([^( ]*)\(([^)]*)\)/m) do |match|
             match.tr(" \t\n", "")
           end
-          rule_part.strip!
+          rule_part = Sass::Util.strip_except_escapes(rule_part)
         end
         rule_part
       end.compact.join(rule_separator)

@@ -47,7 +47,12 @@ module Sass
       def keyframes_ruleset
         start_pos = source_position
         return unless (selector = keyframes_selector)
-        block(node(Sass::Tree::KeyframeRuleNode.new(selector.strip), start_pos), :ruleset)
+        block(
+          node(
+            Sass::Tree::KeyframeRuleNode.new(
+              Sass::Util.strip_except_escapes(selector)),
+            start_pos),
+          :ruleset)
       end
 
       @sass_script_parser = Sass::Script::CssParser
