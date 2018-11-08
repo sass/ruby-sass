@@ -134,7 +134,7 @@ module Sass
         res = (syntactic_type == :class ? ":" : "::") + @name
         if @arg || @selector
           res << "("
-          res << @arg.strip if @arg
+          res << Sass::Util.strip_except_escapes(@arg) if @arg
           res << " " if @arg && @selector
           res << @selector.to_s(opts) if @selector
           res << ")"

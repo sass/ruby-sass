@@ -37,6 +37,10 @@
 
 * Unitless numbers are no longer equal to numbers with units.
 
+## 3.7.2 (8 November 2018)
+
+* Fix more escaped-whitespace edge cases.
+
 ## 3.7.1 (7 November 2018)
 
 * Properly handle escaped whitespace and other unusual characters.
