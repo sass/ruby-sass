@@ -2908,9 +2908,9 @@ WARNING
 
     def percentage_or_unitless(number, max, name)
       if number.unitless?
-        value = number.value
+        number.value
       elsif number.is_unit?("%")
-        value = max * number.value / 100.0;
+        max * number.value / 100.0;
       else
         raise ArgumentError.new(
           "$#{name}: Expected #{number} to have no units or \"%\"");
