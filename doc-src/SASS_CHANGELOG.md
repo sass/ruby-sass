@@ -3,6 +3,11 @@
 * Table of contents
 {:toc}
 
+## 3.7.3 (Unreleased)
+
+* Emit escaped tab characters in identifiers as `\9` rather than a backslash
+  followed by a literal tab.
+
 ## 3.7.2 (8 November 2018)
 
 * Fix more escaped-whitespace edge cases.
