@@ -269,7 +269,7 @@ module Sass
         at_start = start && $1
         char = escaped_char(s)
         next char if char =~ (at_start ? Sass::SCSS::RX::NMSTART : Sass::SCSS::RX::NMCHAR)
-        if char =~ (at_start ? /[\x0-\x8\xA-\x1F\x7F0-9]/ : /[\x0-\x8\xA-\x1F\x7F]/)
+        if char =~ (at_start ? /[\x0-\x1F\x7F0-9]/ : /[\x0-\x1F\x7F]/)
           "\\#{char.ord.to_s(16)} "
         else
           "\\#{char}"
