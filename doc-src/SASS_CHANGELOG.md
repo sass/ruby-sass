@@ -3,7 +3,7 @@
 * Table of contents
 {:toc}
 
-## 3.7.3 (Unreleased)
+## 3.7.3 (4 January 2019)
 
 * Emit escaped tab characters in identifiers as `\9` rather than a backslash
   followed by a literal tab.
