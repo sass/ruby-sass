@@ -2,10 +2,6 @@ sudo: false
 language: ruby
 cache: bundler
 
-# Work around https://travis-ci.community/t/bundle-is-not-installed-for-ruby-2-3/1641/6
-before_install:
-- gem install bundler -v '< 2'
-
 install:
   # If we're running for a pull request, check out the revision of sass-spec
   # referenced by that pull request.
