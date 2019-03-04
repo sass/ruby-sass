@@ -32,7 +32,7 @@ SASS_GEMSPEC = Gem::Specification.new do |spec|
   readmes = Dir['*'].reject{ |x| x =~ /(^|[^.a-z])[a-z]+/ || x == "TODO" }
   spec.executables = ['sass', 'sass-convert', 'scss']
   spec.files = Dir['rails/init.rb', '{lib,bin,extra}/**/*', 'init.rb', '.yardopts'] + readmes
-  spec.homepage = 'http://sass-lang.com/'
+  spec.homepage = 'https://sass-lang.com/'
   spec.license = "MIT"
 
   if spec.respond_to?(:metadata)

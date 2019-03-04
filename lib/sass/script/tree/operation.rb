@@ -111,7 +111,7 @@ module Sass::Script::Tree
       @@color_arithmetic_deprecation.warn(filename, line, <<WARNING)
 The operation `#{value1} #{@operator} #{value2}` is deprecated and will be an error in future versions.
 Consider using Sass's color functions instead.
-http://sass-lang.com/documentation/Sass/Script/Functions.html#other_color_functions
+https://sass-lang.com/documentation/Sass/Script/Functions.html#other_color_functions
 WARNING
     end
 

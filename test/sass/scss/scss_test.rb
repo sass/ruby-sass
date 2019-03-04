@@ -2287,8 +2287,8 @@ SCSS
 
   def test_moz_document_interpolation
     assert_equal <<CSS, render(<<SCSS)
-@-moz-document url(http://sass-lang.com/),
-               url-prefix(http://sass-lang.com/docs),
+@-moz-document url(https://sass-lang.com/),
+               url-prefix(https://sass-lang.com/docs),
                domain(sass-lang.com),
                domain("sass-lang.com") {
   .foo {
@@ -2341,7 +2341,7 @@ SCSS
 
   def test_random_directive_interpolation
     assert_equal <<CSS, render(<<SCSS)
-@foo url(http://sass-lang.com/),
+@foo url(https://sass-lang.com/),
      domain("sass-lang.com"),
      "foobarbaz",
      foobarbaz {
