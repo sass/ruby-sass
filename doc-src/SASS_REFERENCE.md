@@ -683,7 +683,7 @@ They're treated just like unquoted strings.
 #### Strings
 
 CSS specifies two kinds of strings: those with quotes,
-such as `"Lucida Grande"` or `'http://sass-lang.com'`,
+such as `"Lucida Grande"` or `'https://sass-lang.com'`,
 and those without quotes, such as `sans-serif` or `bold`.
 SassScript recognizes both kinds,
 and in general if one kind of string is used in the Sass document,
