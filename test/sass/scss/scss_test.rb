@@ -2295,8 +2295,8 @@ SCSS
     a: b; } }
 CSS
 $domain: "sass-lang.com";
-@-moz-document url(http://\#{$domain}/),
-               url-prefix(http://\#{$domain}/docs),
+@-moz-document url(https://\#{$domain}/),
+               url-prefix(https://\#{$domain}/docs),
                domain(\#{$domain}),
                \#{domain($domain)} {
   .foo {a: b}
@@ -2349,7 +2349,7 @@ SCSS
     a: b; } }
 CSS
 $domain: "sass-lang.com";
-@foo url(http://\#{$domain}/),
+@foo url(https://\#{$domain}/),
      \#{domain($domain)},
      "foo\#{'ba' + 'r'}baz",
      foo\#{'ba' + 'r'}baz {
