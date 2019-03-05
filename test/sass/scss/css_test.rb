@@ -277,7 +277,7 @@ foo {
   c: 50%;
   d: "fraz bran";
   e: flanny-blanny-blan;
-  f: url(http://sass-lang.com);
+  f: url(https://sass-lang.com);
   g: U+ffa?;
   h: #aabbcc; }
 SCSS

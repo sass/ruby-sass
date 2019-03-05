@@ -1,6 +1,6 @@
 Contributions are welcomed. Please see the following site for guidelines:
 
-[http://sass-lang.com/community#Contribute](http://sass-lang.com/community#Contribute)
+[https://sass-lang.com/community#Contribute](https://sass-lang.com/community#Contribute)
 
 * [Branches](#main-development-branches)
   * [Feature Branches](#feature-branches)
@@ -100,7 +100,7 @@ like [`Sass::Engine`][Sass::Engine] stable, we don't have a strong distinction
 between public and private APIs and we need to be able to freely refactor our
 code.
 
-[Sass::Engine]: http://sass-lang.com/documentation/Sass/Engine.html
+[Sass::Engine]: https://sass-lang.com/documentation/Sass/Engine.html
 
 ### Making Breaking Changes
 

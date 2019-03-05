@@ -205,7 +205,7 @@
 * The old-style `:name value` property syntax is deprecated. This syntax is not
   widely used, and is unnecessarily different from CSS.
 
-[color functions]: http://sass-lang.com/documentation/Sass/Script/Functions.html#other_color_functions
+[color functions]: https://sass-lang.com/documentation/Sass/Script/Functions.html#other_color_functions
 
 ## 3.4.24 (18 May 2017)
 

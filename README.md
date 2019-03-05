@@ -54,7 +54,7 @@ In Rails 3, add `gem "sass"` to your Gemfile instead.
 where they'll be automatically compiled
 to corresponding CSS files in `public/stylesheets` when needed
 (the Sass template directory is customizable...
-see [the Sass reference](http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html#template_location-option) for details).
+see [the Sass reference](https://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html#template_location-option) for details).
 
 Sass can also be used with any Rack-enabled web framework.
 To do so, just add
@@ -69,7 +69,7 @@ Then any Sass files in `public/stylesheets/sass`
 will be compiled into CSS files in `public/stylesheets` on every request.
 
 To use Sass programmatically,
-check out the [YARD documentation](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#using_sass).
+check out the [YARD documentation](https://sass-lang.com/documentation/file.SASS_REFERENCE.html#using_sass).
 
 ## Formatting
 
@@ -83,10 +83,10 @@ and get small stylesheets up and running quickly,
 particularly with the help of
 [the Compass style library](http://compass-style.org).
 
-[vars]:    http://sass-lang.com/documentation/file.SASS_REFERENCE.html#variables_
-[nested]:  http://sass-lang.com/documentation/file.SASS_REFERENCE.html#nested_rules
-[mixins]:  http://sass-lang.com/documentation/file.SASS_REFERENCE.html#mixins
-[imports]: http://sass-lang.com/documentation/file.SASS_REFERENCE.html#import
+[vars]:    https://sass-lang.com/documentation/file.SASS_REFERENCE.html#variables_
+[nested]:  https://sass-lang.com/documentation/file.SASS_REFERENCE.html#nested_rules
+[mixins]:  https://sass-lang.com/documentation/file.SASS_REFERENCE.html#mixins
+[imports]: https://sass-lang.com/documentation/file.SASS_REFERENCE.html#import
 
 Sass has two syntaxes.
 The one presented here, known as "SCSS" (for "Sassy CSS"),
@@ -95,7 +95,7 @@ The other (older) syntax, known as the indented syntax or just "Sass",
 is whitespace-sensitive and indentation-based.
 For more information, see the [reference documentation][syntax].
 
-[syntax]: http://sass-lang.com/documentation/file.SASS_REFERENCE.html#syntax
+[syntax]: https://sass-lang.com/documentation/file.SASS_REFERENCE.html#syntax
 
 To run the following examples and see the CSS they produce,
 put them in a file called `test.scss` and run `sass test.scss`.
@@ -170,7 +170,7 @@ You can even give them arguments.
 ```
 
 A comprehensive list of features is available
-in the [Sass reference](http://sass-lang.com/documentation/file.SASS_REFERENCE.html).
+in the [Sass reference](https://sass-lang.com/documentation/file.SASS_REFERENCE.html).
 
 ## Executables
 

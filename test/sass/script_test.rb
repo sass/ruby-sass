@@ -312,10 +312,10 @@ SASS
   end
 
   def test_url_with_interpolation
-    assert_equal "url(http://sass-lang.com/images/foo-bar)", resolve("url(http://sass-lang.com/images/\#{foo-bar})")
-    assert_equal 'url("http://sass-lang.com/images/foo-bar")', resolve("url('http://sass-lang.com/images/\#{foo-bar}')")
-    assert_equal 'url("http://sass-lang.com/images/foo-bar")', resolve('url("http://sass-lang.com/images/#{foo-bar}")')
-    assert_unquoted "url(http://sass-lang.com/images/\#{foo-bar})"
+    assert_equal "url(https://sass-lang.com/images/foo-bar)", resolve("url(https://sass-lang.com/images/\#{foo-bar})")
+    assert_equal 'url("https://sass-lang.com/images/foo-bar")', resolve("url('https://sass-lang.com/images/\#{foo-bar}')")
+    assert_equal 'url("https://sass-lang.com/images/foo-bar")', resolve('url("https://sass-lang.com/images/#{foo-bar}")')
+    assert_unquoted "url(https://sass-lang.com/images/\#{foo-bar})"
   end
 
   def test_hyphenated_variables
