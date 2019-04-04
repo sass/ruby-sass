@@ -3,6 +3,10 @@
 * Table of contents
 {:toc}
 
+## 3.7.4 (3 April 2019)
+
+* Mark Ruby Sass as end-of-life.
+
 ## 3.7.3 (4 January 2019)
 
 * Emit escaped tab characters in identifiers as `\9` rather than a backslash
