@@ -32,7 +32,7 @@ SASS_GEMSPEC = Gem::Specification.new do |spec|
   readmes = Dir['*'].reject{ |x| x =~ /(^|[^.a-z])[a-z]+/ || x == "TODO" }
   spec.executables = ['sass', 'sass-convert', 'scss']
   spec.files = Dir['rails/init.rb', '{lib,bin,extra}/**/*', 'init.rb', '.yardopts'] + readmes
-  spec.homepage = 'http://sass-lang.com/'
+  spec.homepage = 'https://sass-lang.com/'
   spec.license = "MIT"
 
   if spec.respond_to?(:metadata)
@@ -41,7 +41,7 @@ SASS_GEMSPEC = Gem::Specification.new do |spec|
 
   spec.post_install_message = <<END
 
-Ruby Sass is deprecated and will be unmaintained as of 26 March 2019.
+Ruby Sass has reached end-of-life and should no longer be used.
 
 * If you use Sass as a command-line tool, we recommend using Dart Sass, the new
   primary implementation: https://sass-lang.com/install
@@ -50,7 +50,7 @@ Ruby Sass is deprecated and will be unmaintained as of 26 March 2019.
   sassc gem: https://github.com/sass/sassc-ruby#readme
 
 * For more details, please refer to the Sass blog:
-  http://sass.logdown.com/posts/7081811
+  https://sass-lang.com/blog/posts/7828841
 
 END
 end

@@ -37,7 +37,11 @@
 
 * Unitless numbers are no longer equal to numbers with units.
 
-## 3.7.3 (Unreleased)
+## 3.7.4 (3 April 2019)
+
+* Mark Ruby Sass as end-of-life.
+
+## 3.7.3 (4 January 2019)
 
 * Emit escaped tab characters in identifiers as `\9` rather than a backslash
   followed by a literal tab.
@@ -239,7 +243,7 @@
 * The old-style `:name value` property syntax is deprecated. This syntax is not
   widely used, and is unnecessarily different from CSS.
 
-[color functions]: http://sass-lang.com/documentation/Sass/Script/Functions.html#other_color_functions
+[color functions]: https://sass-lang.com/documentation/Sass/Script/Functions.html#other_color_functions
 
 ## 3.4.24 (18 May 2017)
 
